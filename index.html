@@ -1,264 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>I Love You Adii</title>
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      overflow: hidden;
-      font-family: Poppins, Arial, sans-serif;
-      text-align: center;
-    }
-    canvas {
-      display: block;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Month-sarry Surprise</title>
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fit=crop&w=1200&q=80') no-repeat center center/cover;
+  color: #fff;
+}
 
-    /* Top Message with Animation */
-    #topMessage {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 28px;
-      font-weight: bold;
-      color: cyan;
-      opacity: 0;
-      animation: fadeIn 2s ease forwards, pulse 1.5s infinite;
-      animation-delay: 5s; /* Show after 5 seconds */
-      text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-    }
+.glass-box {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  max-width: 850px;
+  width: 95%;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -30px); }
-      to { opacity: 1; transform: translate(-50%, 0); }
-    }
+.glass-box input {
+  width: 60px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+  font-size: 18px;
+}
 
-    @keyframes pulse {
-      0%, 100% { transform: translateX(-50%) scale(1); }
-      50% { transform: translateX(-50%) scale(1.1); }
-    }
-    #loveBtn {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 12px 25px;
-      font-size: 20px;
-      border: none;
-      border-radius: 8px;
-      background-color: cyan;
-      color: black;
-      cursor: pointer;
-      opacity: 0;
-      display: none;
-      transition: opacity 1s;
-      font-weight: bold;
-    }
-    #loveBtn:hover {
-      background-color: deepskyblue;
-      color: white;
-    }
-    #content {
-      display: none;
-      opacity: 0;
-      transition: opacity 1s ease;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .image-container {
-      position: relative;
-      display: inline-block;
-    }
-    .image-container img {
-      width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-    }
-    .caption {
-      position: absolute;
-      bottom: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 5px 10px;
-      color: black;
-      font-weight: bold;
-      font-size: 18px;
-      text-align: center;
-      width: 100%;
-      background: none; 
-      box-shadow: none; 
-    }
-  </style>
+#calendarBox {
+  display: none;
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.images {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.images img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 2px solid #fff;
+}
+
+table {
+  width: 260px;
+  border-collapse: collapse;
+  color: #000;
+  background: #f5e6d3;
+  border: 3px solid black;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid black;
+}
+
+th {
+  background: #e6b8af;
+  color: black;
+}
+
+td.highlight {
+  background: pink;
+  color: red;
+  font-weight: bold;
+  border-radius: 50%;
+}
+
+.message {
+  margin-top: 15px;
+  font-size: 18px;
+  font-family: "Brush Script MT", cursive;
+  font-style: italic;
+  color: #fff;
+  white-space: pre-wrap;
+  text-align: center;
+}
+
+button {
+  margin-top:10px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+#showMessageBtn {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+  margin-top: 20px;
+}
+#showMessageBtn.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: #fff;
+  color: #000;
+  padding: 20px;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #fff 0px,
+    #fff 28px,
+    #ffe6eb 29px
+  );
+  border: 2px solid #e6b8af;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.modal-content img {
+  width: 70px;
+  height: 80px;
+  border-radius: 10px;
+  margin: 5px;
+  object-fit: cover;
+}
+.letter-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 15px 0 10px;
+  color: #e91e63;
+}
+.letter-text {
+  font-size: 14px;
+  text-align: center;
+  white-space: pre-wrap;
+  line-height: 1.2;
+  font-family: 'Georgia', cursive;
+}
+.close-btn {
+  margin-top: 15px;
+  background: #e91e63;
+  color: #fff;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform: scale(0.9);}
+  to {opacity:1; transform: scale(1);}
+}
+</style>
 </head>
 <body>
-  <!-- Top Message -->
-  <div id="topMessage">Wait a second for the final surprise</div>
 
-  <!-- Canvas -->
-  <canvas id="canvas"></canvas>
-
-  <!-- Button -->
-  <button id="loveBtn">Click Me</button>
-
-  <!-- Content -->
-  <div id="content">
-    <div class="image-container">
-      <img src="https://i.postimg.cc/K8z69qqG/Picsart-25-07-24-16-51-26-663.jpg" alt="Love Image">
-      <div class="caption">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You <br>
-        know the Person <br>
-        &nbsp;&nbsp;I love the most <br>
-        &nbsp;&nbsp;Read our <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;callsign, <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I MISS YOU SO MUCH ❤️
-      </div>
-    </div>
+<div class="glass-box" id="inputBox">
+  <h2>Hi Adii ❤️</h2>
+  <p>I have a little surprise for you,<br>but before that, what is the date today?</p>
+  <div>
+    <input type="number" id="month" placeholder="MM" min="1" max="12">
+    <input type="number" id="day" placeholder="DD" min="1" max="31">
+    <input type="number" id="year" placeholder="YYYY" min="2020" max="2100">
   </div>
 
-  <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    const btn = document.getElementById("loveBtn");
-    const content = document.getElementById("content");
+  <!-- Music button -->
+  <button id="musicBtn">🎶 Favorite Music 🎶</button>
+  <audio id="bgMusic" src="https://files.catbox.moe/5869lm.m4a"></audio>
 
-    let width, height;
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+  <button onclick="checkDate()">Submit</button>
+</div>
+
+<div class="glass-box" id="calendarBox">
+  <div class="calendar-container">
+    <div class="images">
+      <img src="https://i.ibb.co/7dXj7md0/Messenger-creation-2-C91-D6-B2-0490-4977-9118-5070-AFB0-CE18.jpg" alt="Photo 1">
+      <img src="https://i.ibb.co/0pKYY6K4/Messenger-creation-DA622-ADA-68-B0-4411-9-E85-1-AC84-FD3830-D.jpg" alt="Photo 2">
+    </div>
+    <div>
+      <h3>August 2025</h3>
+      <table id="calendarTable">
+        <thead>
+          <tr>
+            <th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th>
+          </tr>
+        </thead>
+        <tbody id="calendarBody"></tbody>
+      </table>
+      <div class="message" id="message"></div>
+      <button id="showMessageBtn">Open Love Letter 💌</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="messageModal">
+  <div class="modal-content">
+    <img src="https://i.ibb.co/5QZ4XVQ/Messenger-creation-E8-E218-BA-8-BB8-4-CBA-9-A57-F3-A6-C5898-A41.jpg" alt="Pic1">
+    <img src="https://i.ibb.co/cKZg8Jsm/Messenger-creation-7-F974-FCB-1-E9-C-4452-A78-B-6-DC8004343-CA.jpg" alt="Pic2">
+    <div class="letter-title">Janell</div>
+    <div class="letter-text">
+Happy Monthsarry, Adii ❤️
+
+Every day with you feels so special, everytime na kausap kita ansaya saya ko 
+and I’m so thankful to have you as mine.
+You make my world brighter adii
+I’m proud to be your partner, your best friend, and your love.
+
+I always pray for your safety, asking the Lord to protect you and never let any harm come your way. 
+You are my most precious blessing, and I want you safe always. ❤
+
+No matter what, I will always choose you.
+Here’s to more months and years together, growing, laughing, and loving each other even more.
+
+I love you always, my only one 😘🥰❤
+    </div>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+// Music toggle
+let musicPlaying = false;
+document.getElementById("musicBtn").addEventListener("click", () => {
+  let music = document.getElementById("bgMusic");
+  if(musicPlaying) { music.pause(); musicPlaying=false; } 
+  else { music.play(); musicPlaying=true; }
+});
+
+// Check date
+function checkDate() {
+  let month = document.getElementById('month').value.padStart(2,"0");
+  let day = document.getElementById('day').value.padStart(2,"0");
+  let year = document.getElementById('year').value.trim();
+
+  if((month==="08" || month==="8") && day==="29" && year==="2025") {
+    document.getElementById('inputBox').style.display='none';
+    document.getElementById('calendarBox').style.display='block';
+    generateCalendar(2025,7);
+    document.getElementById('message').textContent = "August 29 2025, a monthsarry celebrating to my only one Adii ❤🥰😘";
+
+    setTimeout(()=>{ document.getElementById("showMessageBtn").classList.add("show"); }, 1000);
+  } else {
+    alert("Oops! That's not the correct date. Try again!");
+  }
+}
+
+// Generate calendar
+function generateCalendar(year, month) {
+  const calendarBody = document.getElementById('calendarBody');
+  calendarBody.innerHTML = "";
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  let row = document.createElement('tr');
+  let dayCount=1;
+
+  for(let i=0;i<7;i++){
+    if(i<firstDay) row.appendChild(document.createElement('td'));
+    else{
+      let cell = document.createElement('td');
+      cell.textContent=dayCount;
+      if(dayCount===29) cell.className='highlight';
+      row.appendChild(cell);
+      dayCount++;
     }
-    resize();
-    window.addEventListener("resize", resize);
+  }
+  calendarBody.appendChild(row);
 
-    let dots = [];
-    let textDots = [];
-    let formText = false;
-    let frameCount = 0;
-
-    const fullMessage = "I Love You Adii";
-
-    function createDot() {
-      const x = width / 2 + (Math.random() - 0.5) * 100;
-      const y = height + 10;
-      return {
-        x,
-        y,
-        size: 3 + Math.random(),
-        tx: 0,
-        ty: 0,
-        opacity: 1
-      };
+  while(dayCount<=daysInMonth){
+    row=document.createElement('tr');
+    for(let i=0;i<7;i++){
+      if(dayCount<=daysInMonth){
+        let cell=document.createElement('td');
+        cell.textContent=dayCount;
+        if(dayCount===29) cell.className='highlight';
+        row.appendChild(cell);
+        dayCount++;
+      } else { row.appendChild(document.createElement('td')); }
     }
+    calendarBody.appendChild(row);
+  }
+}
 
-    function generateHeartDots(scale = 10, offsetY = 0) {
-      const points = [];
-      for (let t = 0; t < Math.PI * 2; t += 0.03) {
-        const x = 16 * Math.pow(Math.sin(t), 3);
-        const y =
-          13 * Math.cos(t) -
-          5 * Math.cos(2 * t) -
-          2 * Math.cos(3 * t) -
-          Math.cos(4 * t);
-        points.push({
-          x: width / 2 + x * scale,
-          y: height / 2 - y * scale + offsetY
-        });
-      }
-      return points;
-    }
+// Show modal
+document.getElementById("showMessageBtn").addEventListener("click", ()=>{
+  document.getElementById("messageModal").style.display="flex";
+});
+function closeModal(){
+  document.getElementById("messageModal").style.display="none";
+}
+</script>
 
-    function textToDots(message) {
-      const tempCanvas = document.createElement("canvas");
-      const tempCtx = tempCanvas.getContext("2d");
-      tempCanvas.width = width;
-      tempCanvas.height = height;
-
-      const fontSize = Math.min(width * 0.12, 90);
-      tempCtx.fillStyle = "cyan";
-      tempCtx.font = `bold ${fontSize}px Poppins`;
-      tempCtx.textAlign = "center";
-      tempCtx.textBaseline = "middle";
-      tempCtx.fillText(message, width / 2, height / 2);
-
-      const data = tempCtx.getImageData(0, 0, width, height).data;
-      const points = [];
-
-      for (let y = 0; y < height; y += 4) {
-        for (let x = 0; x < width; x += 4) {
-          const i = (y * width + x) * 4;
-          if (data[i + 3] > 128) {
-            points.push({ x, y });
-          }
-        }
-      }
-      return points;
-    }
-
-    const bigHeart = generateHeartDots(12, 0).map(p => ({ ...p, color: "deepskyblue" }));
-    const mediumHeart = generateHeartDots(9, 5).map(p => ({ ...p, color: "purple" }));
-    const smallHeart = generateHeartDots(5, 10).map(p => ({ ...p, color: "pink" }));
-    const heartDots = [...bigHeart, ...mediumHeart, ...smallHeart];
-
-    function animate() {
-      frameCount++;
-      ctx.fillStyle = "rgba(0,0,0,0.2)";
-      ctx.fillRect(0, 0, width, height);
-
-      if (dots.length < 800 && frameCount % 2 === 0) {
-        dots.push(createDot());
-      }
-
-      for (let i = 0; i < dots.length; i++) {
-        const dot = dots[i];
-        const targetDots = formText ? textDots : heartDots;
-        const target = targetDots[i % targetDots.length];
-
-        const pulse = 1 + 0.05 * Math.sin(frameCount * 0.05);
-        dot.tx = width / 2 + (target.x - width / 2) * pulse;
-        dot.ty = height / 2 + (target.y - height / 2) * pulse;
-
-        dot.x += (dot.tx - dot.x) * 0.03;
-        dot.y += (dot.ty - dot.y) * 0.03;
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.fillStyle = target.color || "deepskyblue";
-        ctx.shadowBlur = formText ? 0 : 3;
-        ctx.shadowColor = formText ? "transparent" : target.color;
-        ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-setTimeout(() => {
-  document.getElementById("topMessage").style.opacity = 1;
-}, 5000); // Show after 5 seconds
-
-    // After 30 seconds, form text and show button after 2 sec
-    setTimeout(() => {
-      textDots = textToDots(fullMessage);
-      formText = true;
-
-      setTimeout(() => {
-        btn.style.display = "block";
-        setTimeout(() => btn.style.opacity = 1, 50);
-      }, 2000);
-    }, 30000);
-
-    btn.addEventListener('click', () => {
-      btn.style.display = "none";
-      content.style.display = "block";
-      setTimeout(() => content.style.opacity = 1, 50);
-    });
-
-    animate();
-  </script>
 </body>
 </html>
